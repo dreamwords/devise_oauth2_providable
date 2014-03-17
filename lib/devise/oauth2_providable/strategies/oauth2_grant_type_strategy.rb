@@ -4,7 +4,7 @@ module Devise
   module Strategies
     class Oauth2GrantTypeStrategy < Authenticatable
       def valid?
-        params[:controller] == 'devise/oauth2_providable/tokens' && request.post? && params[:grant_type] == grant_type
+        params[:controller] == 'devise/oauth2_providable/tokens' && request.post? && params[:grant_type] == grant_type && set_authentication_type
       end
 
       # defined by subclass
@@ -33,6 +33,10 @@ module Devise
         body[:error_description] = description if description
         custom! [400, {'Content-Type' => 'application/json'}, [body.to_json]]
         throw :warden
+      end
+
+      def set_authentication_type
+        self.authentication_type = :token_auth
       end
     end
   end
